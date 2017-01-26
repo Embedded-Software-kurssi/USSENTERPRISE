@@ -151,31 +151,31 @@ void SegmentScreen::init() {
  void SegmentScreen::show(char c) {
   Serial.println(c, DEC);
 	 if (c > 47 && c < 58) {
-		 bitAction(BIT7 & numbers[c - 48], 4);
-		 bitAction(BIT6 & numbers[c - 48], 5);
-		 bitAction(BIT5 & numbers[c - 48], 6);
-		 bitAction(BIT4 & numbers[c - 48], 7);
-		 bitAction(BIT3 & numbers[c - 48], 8);
-		 bitAction(BIT2 & numbers[c - 48], 9);
-		 bitAction(BIT1 & numbers[c - 48], 10);
+		 bitAction(BIT7 & numbers[c - 48], cathodePins[0]);
+		 bitAction(BIT6 & numbers[c - 48], cathodePins[1]);
+		 bitAction(BIT5 & numbers[c - 48], cathodePins[2]);
+		 bitAction(BIT4 & numbers[c - 48], cathodePins[3]);
+		 bitAction(BIT3 & numbers[c - 48], cathodePins[4]);
+		 bitAction(BIT2 & numbers[c - 48], cathodePins[5]);
+		 bitAction(BIT1 & numbers[c - 48], cathodePins[6]);
 	 } else if (c > 64 && c < 91) {
-      c = c -7;
-		 bitAction(BIT7 & numbers[c - 48], 4);
-		 bitAction(BIT6 & numbers[c - 48], 5);
-		 bitAction(BIT5 & numbers[c - 48], 6);
-		 bitAction(BIT4 & numbers[c - 48], 7);
-		 bitAction(BIT3 & numbers[c - 48], 8);
-		 bitAction(BIT2 & numbers[c - 48], 9);
-		 bitAction(BIT1 & numbers[c - 48], 10);
+      	 c = c -7;
+		 bitAction(BIT7 & numbers[c - 48], cathodePins[0]);
+		 bitAction(BIT6 & numbers[c - 48], cathodePins[1]);
+		 bitAction(BIT5 & numbers[c - 48], cathodePins[2]);
+		 bitAction(BIT4 & numbers[c - 48], cathodePins[3]);
+		 bitAction(BIT3 & numbers[c - 48], cathodePins[4]);
+		 bitAction(BIT2 & numbers[c - 48], cathodePins[5]);
+		 bitAction(BIT1 & numbers[c - 48], cathodePins[6]);
 	 } else if (c > 96 && c < 123) {
-    c = c- 7;
-		 bitAction(BIT7 & numbers[c - 48], 4);
-		 bitAction(BIT6 & numbers[c - 48], 5);
-		 bitAction(BIT5 & numbers[c - 48], 6);
-		 bitAction(BIT4 & numbers[c - 48], 7);
-		 bitAction(BIT3 & numbers[c - 48], 8);
-		 bitAction(BIT2 & numbers[c - 48], 9);
-		 bitAction(BIT1 & numbers[c - 48], 10);
+    	c = c- 7;
+		 bitAction(BIT7 & numbers[c - 48], cathodePins[0]);
+		 bitAction(BIT6 & numbers[c - 48], cathodePins[1]);
+		 bitAction(BIT5 & numbers[c - 48], cathodePins[2]);
+		 bitAction(BIT4 & numbers[c - 48], cathodePins[3]);
+		 bitAction(BIT3 & numbers[c - 48], cathodePins[4]);
+		 bitAction(BIT2 & numbers[c - 48], cathodePins[5]);
+		 bitAction(BIT1 & numbers[c - 48], cathodePins[6]);
 	 }
  }
 
