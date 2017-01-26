@@ -146,6 +146,7 @@ void loop() {
     MACHINE_ON = true;
     TAKING_WATER = true;
     takingWaterTime = millis();
+    ONOFF_PRESSED = false;
   }
   if (ENOUGH_WATER_PRESSED) {
     if (TAKING_WATER) {
@@ -160,6 +161,7 @@ void loop() {
       RINGSING = true;
       rinsingTime = millis(); 
     }
+    ENOUGH_WATER_PRESSED = false;
   }
   if (WHEN_WATER_IS_OUT_PRESSED) {
     if (DIRTY_WATER_PUMPING) {
@@ -174,6 +176,7 @@ void loop() {
       CERTIFUGING = true;
       certifugingTime = millis();     
     }
+    WHEN_WATER_IS_OUT_PRESSED = false;
   }
   
   layout.refresh();
