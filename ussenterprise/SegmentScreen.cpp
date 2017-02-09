@@ -149,7 +149,6 @@ void SegmentScreen::init() {
 }
 
  void SegmentScreen::show(char c) {
-  Serial.println(c, DEC);
 	 if (c > 47 && c < 58) {
 		 bitAction(BIT7 & numbers[c - 48], cathodePins[0]);
 		 bitAction(BIT6 & numbers[c - 48], cathodePins[1]);

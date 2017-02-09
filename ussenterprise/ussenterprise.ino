@@ -3,13 +3,23 @@
 #include "EnableInterrupt.h"
 
 #define ONOFF A8
-#define ENOUGH_WATER A9
+#define ENOUGH_WATER A13
 #define WHEN_WATER_IS_OUT A10
 
 #define HANA 50
 #define PUMPPU 51
 #define LINKOUS 52
 #define PESU 53
+
+#define TAKING_WATER_MAX_TIME 3000
+#define WASHING_MAX_TIME 9000
+#define DIRTY_WATER_PUMPING_MAX_TIME 3000
+#define TAKING_WATER2_MAX_TIME 3000
+#define RINGSING_MAX_TIME 3000
+#define PUMPING_OUT_MAX_TIME 3000
+#define CERTIFUGING_MAX_TIME 5000
+
+#define WASHING_PROGRAM_TIME 30000
 
 long takingWaterTime = 0;
 long washingTime = 0;
@@ -35,6 +45,13 @@ bool SAMPLING_INPUT = false;
 bool ONOFF_PRESSED = false;
 bool ENOUGH_WATER_PRESSED = false;
 bool WHEN_WATER_IS_OUT_PRESSED = false;
+
+
+int mseconds = 0;
+
+
+long takingWaterStartTime = 0;
+long pumpingWaterStartTime = 0;
 
 char cathodePins[7] = {
     4, 5, 6, 7, 8, 9, 10
@@ -65,156 +82,167 @@ void setup()
     pinMode(LINKOUS, OUTPUT);
     pinMode(PESU, OUTPUT);
 
+	initTimer();
     initTimer2();
+
     layout.init();
-    layout.setText("0145");
 }
 
 void loop()
 {
     long currentTime = millis();
-    if (MACHINE_ON)
-    {
 	if (TAKING_WATER)
 	{
 	    if (currentTime - takingWaterTime > 3000)
 	    {
-		digitalWrite(HANA, LOW);
-		TAKING_WATER = false;
-		WASHING = true;
-		washingTime = millis();
-	    }
-	    else
-	    {
-		digitalWrite(HANA, HIGH);
+			Serial.println("Pesee");
+			digitalWrite(HANA, LOW);
+			TAKING_WATER = false;
+			WASHING = true;
+			washingTime = millis();
+			digitalWrite(PESU, HIGH);
 	    }
 	}
 	if (WASHING)
 	{
 	    if (currentTime - washingTime > 9000)
 	    {
-		digitalWrite(PESU, LOW);
-		WASHING = false;
-		DIRTY_WATER_PUMPING = true;
-		dirtyWaterPmpingTime = millis();
-	    }
-	    else
-	    {
-		digitalWrite(PESU, HIGH);
+			Serial.println("Likainen vesi");
+			digitalWrite(PESU, LOW);
+			WASHING = false;
+			DIRTY_WATER_PUMPING = true;
+			dirtyWaterPmpingTime = millis();
+			digitalWrite(PUMPPU, HIGH);
 	    }
 	}
 	if (DIRTY_WATER_PUMPING)
 	{
 	    if (currentTime - dirtyWaterPmpingTime > 3000)
 	    {
-		digitalWrite(PUMPPU, LOW);
-		DIRTY_WATER_PUMPING = false;
-		TAKING_WATER2 = true;
-		takingWaterTime2 = millis();
-	    }
-	    else
-	    {
-		digitalWrite(PUMPPU, HIGH);
+			Serial.println("Ottavetta2");
+			digitalWrite(PUMPPU, LOW);
+			DIRTY_WATER_PUMPING = false;
+			TAKING_WATER2 = true;
+			takingWaterTime2 = millis();
+			digitalWrite(HANA, HIGH);
 	    }
 	}
 	if (TAKING_WATER2)
 	{
 	    if (currentTime - takingWaterTime2 > 3000)
 	    {
-		digitalWrite(HANA, HIGH);
-		TAKING_WATER2 = false;
-		RINGSING = true;
-		rinsingTime = millis();
-	    }
-	    else
-	    {
-		digitalWrite(HANA, HIGH);
+			Serial.println("ringsing?");
+			digitalWrite(HANA, HIGH);
+			TAKING_WATER2 = false;
+			RINGSING = true;
+			rinsingTime = millis();
+			digitalWrite(PESU, HIGH);
 	    }
 	}
 	if (RINGSING)
 	{
 	    if (currentTime - rinsingTime > 3000)
 	    {
-		digitalWrite(PESU, LOW);
-		RINGSING = false;
-		PUMPING_OUT = true;
-		pumpingOutTime = millis();
-	    }
-	    else
-	    {
-		digitalWrite(PESU, HIGH);
+			Serial.println("pump out");
+			digitalWrite(PESU, LOW);
+			RINGSING = false;
+			PUMPING_OUT = true;
+			pumpingOutTime = millis();
+			digitalWrite(PUMPPU, HIGH);
 	    }
 	}
 	if (PUMPING_OUT)
 	{
 	    if (currentTime - pumpingOutTime > 3000)
 	    {
-		digitalWrite(PUMPPU, LOW);
-		PUMPING_OUT = false;
-		CERTIFUGING = true;
-		certifugingTime = millis();
-	    }
-	    else
-	    {
-		digitalWrite(PUMPPU, HIGH);
+			Serial.println("certrii");
+			digitalWrite(PUMPPU, LOW);
+			PUMPING_OUT = false;
+			CERTIFUGING = true;
+			certifugingTime = millis();
+			digitalWrite(LINKOUS, HIGH);
 	    }
 	}
 	if (CERTIFUGING)
 	{
+		Serial.println(currentTime - certifugingTime);
 	    if (currentTime - certifugingTime > 5000)
 	    {
-		digitalWrite(LINKOUS, LOW);
-		CERTIFUGING = false;
-	    }
-	    else
-	    {
-		digitalWrite(LINKOUS, HIGH);
+			Serial.println("loppu");
+			digitalWrite(LINKOUS, LOW);
+			CERTIFUGING = false;
 	    }
 	}
-    }
     if (ONOFF_PRESSED)
     {
-	MACHINE_ON = true;
-	TAKING_WATER = true;
-	takingWaterTime = millis();
-	ONOFF_PRESSED = false;
+		ONOFF_PRESSED = false;
+		Serial.println("ONOFF_PRESSED");
+	    mseconds = WASHING_PROGRAM_TIME;
+	    TAKING_WATER = true;	    
+		takingWaterTime = millis();
+		digitalWrite(HANA, HIGH);
+		Serial.println("Vesi");
     }
     if (ENOUGH_WATER_PRESSED)
     {
-	if (TAKING_WATER)
-	{
-	    digitalWrite(HANA, LOW);
-	    TAKING_WATER = false;
-	    WASHING = true;
-	    washingTime = millis();
-	}
-	if (TAKING_WATER2)
-	{
-	    digitalWrite(HANA, HIGH);
-	    TAKING_WATER2 = false;
-	    RINGSING = true;
-	    rinsingTime = millis();
-	}
-	ENOUGH_WATER_PRESSED = false;
+		Serial.println("Enough water pressed");
+		if (TAKING_WATER)
+		{
+			Serial.println("enough taking water");
+			Serial.println(TAKING_WATER_MAX_TIME - (millis() - takingWaterTime));
+			mseconds -= TAKING_WATER_MAX_TIME - (millis() - takingWaterTime);
+			Serial.println("Pesee");
+			digitalWrite(HANA, LOW);
+			TAKING_WATER = false;
+			WASHING = true;
+			washingTime = millis();
+			digitalWrite(PESU, HIGH);
+		}
+		if (TAKING_WATER2)
+		{
+			Serial.println("Enough taking water2");
+			mseconds -= TAKING_WATER2_MAX_TIME - (millis() - takingWaterTime2);
+	    	Serial.println("Pesee");
+			digitalWrite(HANA, LOW);
+			TAKING_WATER = false;
+			WASHING = true;
+			washingTime = millis();
+			digitalWrite(PESU, HIGH);
+		}
+		ENOUGH_WATER_PRESSED = false;
     }
     if (WHEN_WATER_IS_OUT_PRESSED)
     {
-	if (DIRTY_WATER_PUMPING)
-	{
-	    digitalWrite(PUMPPU, LOW);
-	    DIRTY_WATER_PUMPING = false;
-	    TAKING_WATER2 = true;
-	    takingWaterTime2 = millis();
-	}
-	if (PUMPING_OUT)
-	{
-	    digitalWrite(PUMPPU, LOW);
-	    PUMPING_OUT = false;
-	    CERTIFUGING = true;
-	    certifugingTime = millis();
-	}
-	WHEN_WATER_IS_OUT_PRESSED = false;
+		Serial.println("waterisout");
+		if (DIRTY_WATER_PUMPING)
+		{
+			mseconds -= DIRTY_WATER_PUMPING_MAX_TIME - (millis() - dirtyWaterPmpingTime);
+	    	Serial.println("Ottavetta2");
+			digitalWrite(PUMPPU, LOW);
+			DIRTY_WATER_PUMPING = false;
+			TAKING_WATER2 = true;
+			takingWaterTime2 = millis();
+			digitalWrite(HANA, HIGH);
+		}
+		if (PUMPING_OUT)
+		{
+			mseconds -= PUMPING_OUT_MAX_TIME - (millis() - pumpingOutTime);
+			Serial.println("certrii");
+			digitalWrite(PUMPPU, LOW);
+			PUMPING_OUT = false;
+			CERTIFUGING = true;
+			certifugingTime = millis();
+			digitalWrite(LINKOUS, HIGH);
+		}
+		WHEN_WATER_IS_OUT_PRESSED = false;
     }
+
+    String s;
+    if (mseconds/1000 < 10)
+	s = String("000") + String(mseconds/1000);
+    else
+	s = String("00") + String(mseconds/1000);
+    layout.setText(s);
 
     layout.refresh();
 }
@@ -228,8 +256,10 @@ ISR(TIMER2_COMPA_vect)
 {
     stopTimer2();
     ONOFF_PRESSED = digitalRead(ONOFF);
-    ENOUGH_WATER_PRESSED = digitalRead(ENOUGH_WATER_PRESSED);
+    ENOUGH_WATER_PRESSED = digitalRead(ENOUGH_WATER);
     WHEN_WATER_IS_OUT_PRESSED = digitalRead(WHEN_WATER_IS_OUT);
+    Serial.println(ENOUGH_WATER_PRESSED);
+    Serial.println(WHEN_WATER_IS_OUT_PRESSED);
 }
 
 void startTimer2()
@@ -245,16 +275,36 @@ void stopTimer2()
 
 void initTimer2()
 {
-    //set timer0 interrupt at 500Hz
-    TCCR2A = 0; // set entire TCCR0A register to 0
-    TCCR2B = 0; // same for TCCR0B
-    TCNT2 = 0;  //initialize counter value to 0
-    // set compare match register for 500Hz increments
-    OCR2A = 46; // = (16*10^6) / (500*64) - 1 (must be <256)
-    // turn on CTC mode
+    TCCR2A = 0;
+    TCCR2B = 0;
+    TCNT2 = 0;
+    OCR2A = 46;
     TCCR2A |= (1 << WGM21);
-    // Set CS02 for 256 prescaler
     TCCR2B |= (1 << CS12) | (1 << CS10);
-    // enable timer compare interrupt
     TIMSK2 &= ~(1 << OCIE2A);
+}
+
+
+void initTimer() {
+	TCCR1A = 0;
+	TCCR1B = 0;
+	TCNT1  = 0;
+	OCR1A = 781;
+	TCCR1B |= (1 << WGM12);
+	TCCR1B |= (1 << CS12) | (1 << CS10);
+	TIMSK1 |= (1 << OCIE1A);	
+}
+
+void startTimer() {
+	TCNT1  = 0;
+	TIMSK1 |= (1 << OCIE2A);
+}
+
+void stopTimer() {
+	TIMSK1 &= ~(1 << OCIE2A);
+}
+
+ISR(TIMER1_COMPA_vect){
+	mseconds-=50;
+	if (mseconds < 0) mseconds = 0;
 }
