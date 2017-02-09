@@ -68,7 +68,6 @@ SegmentLayout layout(screens, 4);
 
 void setup()
 {
-    Serial.begin(9600);
     pinMode(ONOFF, INPUT);
     pinMode(ENOUGH_WATER, INPUT);
     pinMode(WHEN_WATER_IS_OUT, INPUT);
@@ -95,7 +94,6 @@ void loop()
 	{
 	    if (currentTime - takingWaterTime > 3000)
 	    {
-			Serial.println("Pesee");
 			digitalWrite(HANA, LOW);
 			TAKING_WATER = false;
 			WASHING = true;
@@ -107,7 +105,6 @@ void loop()
 	{
 	    if (currentTime - washingTime > 9000)
 	    {
-			Serial.println("Likainen vesi");
 			digitalWrite(PESU, LOW);
 			WASHING = false;
 			DIRTY_WATER_PUMPING = true;
@@ -119,7 +116,6 @@ void loop()
 	{
 	    if (currentTime - dirtyWaterPmpingTime > 3000)
 	    {
-			Serial.println("Ottavetta2");
 			digitalWrite(PUMPPU, LOW);
 			DIRTY_WATER_PUMPING = false;
 			TAKING_WATER2 = true;
@@ -131,7 +127,6 @@ void loop()
 	{
 	    if (currentTime - takingWaterTime2 > 3000)
 	    {
-			Serial.println("ringsing?");
 			digitalWrite(HANA, HIGH);
 			TAKING_WATER2 = false;
 			RINGSING = true;
@@ -143,7 +138,6 @@ void loop()
 	{
 	    if (currentTime - rinsingTime > 3000)
 	    {
-			Serial.println("pump out");
 			digitalWrite(PESU, LOW);
 			RINGSING = false;
 			PUMPING_OUT = true;
@@ -155,7 +149,6 @@ void loop()
 	{
 	    if (currentTime - pumpingOutTime > 3000)
 	    {
-			Serial.println("certrii");
 			digitalWrite(PUMPPU, LOW);
 			PUMPING_OUT = false;
 			CERTIFUGING = true;
@@ -165,10 +158,8 @@ void loop()
 	}
 	if (CERTIFUGING)
 	{
-		Serial.println(currentTime - certifugingTime);
 	    if (currentTime - certifugingTime > 5000)
 	    {
-			Serial.println("loppu");
 			digitalWrite(LINKOUS, LOW);
 			CERTIFUGING = false;
 	    }
@@ -176,22 +167,16 @@ void loop()
     if (ONOFF_PRESSED)
     {
 		ONOFF_PRESSED = false;
-		Serial.println("ONOFF_PRESSED");
 	    mseconds = WASHING_PROGRAM_TIME;
 	    TAKING_WATER = true;	    
 		takingWaterTime = millis();
 		digitalWrite(HANA, HIGH);
-		Serial.println("Vesi");
     }
     if (ENOUGH_WATER_PRESSED)
     {
-		Serial.println("Enough water pressed");
 		if (TAKING_WATER)
 		{
-			Serial.println("enough taking water");
-			Serial.println(TAKING_WATER_MAX_TIME - (millis() - takingWaterTime));
 			mseconds -= TAKING_WATER_MAX_TIME - (millis() - takingWaterTime);
-			Serial.println("Pesee");
 			digitalWrite(HANA, LOW);
 			TAKING_WATER = false;
 			WASHING = true;
@@ -200,9 +185,7 @@ void loop()
 		}
 		if (TAKING_WATER2)
 		{
-			Serial.println("Enough taking water2");
 			mseconds -= TAKING_WATER2_MAX_TIME - (millis() - takingWaterTime2);
-	    	Serial.println("Pesee");
 			digitalWrite(HANA, LOW);
 			TAKING_WATER = false;
 			WASHING = true;
@@ -213,11 +196,9 @@ void loop()
     }
     if (WHEN_WATER_IS_OUT_PRESSED)
     {
-		Serial.println("waterisout");
 		if (DIRTY_WATER_PUMPING)
 		{
 			mseconds -= DIRTY_WATER_PUMPING_MAX_TIME - (millis() - dirtyWaterPmpingTime);
-	    	Serial.println("Ottavetta2");
 			digitalWrite(PUMPPU, LOW);
 			DIRTY_WATER_PUMPING = false;
 			TAKING_WATER2 = true;
@@ -227,7 +208,6 @@ void loop()
 		if (PUMPING_OUT)
 		{
 			mseconds -= PUMPING_OUT_MAX_TIME - (millis() - pumpingOutTime);
-			Serial.println("certrii");
 			digitalWrite(PUMPPU, LOW);
 			PUMPING_OUT = false;
 			CERTIFUGING = true;
@@ -258,8 +238,6 @@ ISR(TIMER2_COMPA_vect)
     ONOFF_PRESSED = digitalRead(ONOFF);
     ENOUGH_WATER_PRESSED = digitalRead(ENOUGH_WATER);
     WHEN_WATER_IS_OUT_PRESSED = digitalRead(WHEN_WATER_IS_OUT);
-    Serial.println(ENOUGH_WATER_PRESSED);
-    Serial.println(WHEN_WATER_IS_OUT_PRESSED);
 }
 
 void startTimer2()
